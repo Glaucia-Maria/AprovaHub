@@ -142,9 +142,8 @@ Para manter o projeto simples e permitir uma implementação inicial rápida, as
 ## 9. Arquitetura e Tecnologias
 ![Arquitetura](mermaid-diagram.png)
 
-
 ## 10. Modelagem do banco
-
+![Modelagem](model-db.png)
 ## 12. Estrutura do projeto
 
 ## 13. Interface
