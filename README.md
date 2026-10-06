@@ -139,11 +139,11 @@ Para manter o projeto simples e permitir uma implementação inicial rápida, as
 
 **UC07** – Consultar Evolução e Domínio Geral
 
-## 9. Arquitetura
+## 9. Arquitetura e Tecnologias
+![Arquitetura](mermaid-diagram.png)
 
-## 10. Tecnologias
 
-## 11. Modelagem do banco
+## 10. Modelagem do banco
 
 ## 12. Estrutura do projeto
 
