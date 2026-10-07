@@ -789,6 +789,11 @@ h1 {
   margin-bottom: 0;
 }
 
+.discipline-list-section .discipline-expand-hint {
+  margin-top: 4px;
+  color: #aebbcf;
+}
+
 .discipline-card {
   min-width: 0;
   border: 1px solid var(--color-border);
@@ -845,6 +850,23 @@ h1 {
 
 .discipline-name {
   font-weight: 700;
+}
+
+.discipline-toggle-action {
+  flex: 0 0 auto;
+  border: 1px solid #1e5949;
+  border-radius: 999px;
+  padding: 5px 9px;
+  background: #10231f;
+  color: var(--color-green);
+  font-size: 10px;
+  font-weight: 700;
+  transition: background 150ms ease, border-color 150ms ease;
+}
+
+.discipline-toggle:hover .discipline-toggle-action {
+  border-color: var(--color-green);
+  background: #15372e;
 }
 
 .discipline-chevron {

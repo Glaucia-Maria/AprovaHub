@@ -362,6 +362,11 @@ function ProcessoDetalhe({ processo, onBack }) {
             <div>
               <h2>Disciplinas</h2>
               <p>{disciplinas.length} {disciplinas.length === 1 ? 'cadastrada' : 'cadastradas'}</p>
+              {disciplinas.length > 0 && (
+                <p className="discipline-expand-hint">
+                  Clique no nome da disciplina para expandir ou recolher os conteúdos.
+                </p>
+              )}
             </div>
           </div>
 
@@ -408,6 +413,9 @@ function ProcessoDetalhe({ processo, onBack }) {
                             <span className="discipline-title">
                               <span className="discipline-name">{disciplina.nome}</span>
                               <span className="weight-badge">Peso {disciplina.peso}</span>
+                            </span>
+                            <span className="discipline-toggle-action">
+                              {isExpanded ? 'Recolher conteúdos' : 'Expandir conteúdos'}
                             </span>
                             <span className="discipline-chevron" aria-hidden="true">⌄</span>
                           </button>
