@@ -805,6 +805,27 @@ h1 {
   gap: 12px;
 }
 
+.discipline-toggle {
+  display: flex;
+  flex: 1;
+  min-width: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border: 0;
+  padding: 0;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.discipline-toggle:focus-visible {
+  outline: 2px solid var(--color-green);
+  outline-offset: 4px;
+  border-radius: 4px;
+}
+
 .discipline-title {
   display: flex;
   flex-wrap: wrap;
@@ -813,13 +834,33 @@ h1 {
   min-width: 0;
 }
 
-.discipline-title h3,
+.discipline-name,
 .content-item h4 {
   margin: 0;
   color: #e8edf5;
   font-family: Manrope, sans-serif;
   font-size: 14px;
   overflow-wrap: anywhere;
+}
+
+.discipline-name {
+  font-weight: 700;
+}
+
+.discipline-chevron {
+  flex: 0 0 auto;
+  color: var(--color-muted);
+  font-size: 17px;
+  line-height: 1;
+  transition: transform 150ms ease, color 150ms ease;
+}
+
+.discipline-toggle:hover .discipline-chevron {
+  color: var(--color-green);
+}
+
+.discipline-toggle[aria-expanded="true"] .discipline-chevron {
+  transform: rotate(180deg);
 }
 
 .weight-badge,
