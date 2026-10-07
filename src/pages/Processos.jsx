@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import ProcessoCard from '../components/Processos/ProcessoCard'
 import ProcessoForm from '../components/Processos/ProcessoForm'
+import ProcessoDetalhe from './ProcessoDetalhe'
 import {
   criarProcesso,
   editarProcesso,
@@ -18,6 +19,7 @@ function Processos() {
   const [loadFailed, setLoadFailed] = useState(false)
   const [reloadKey, setReloadKey] = useState(0)
   const [errorMessage, setErrorMessage] = useState('')
+  const [selectedProcess, setSelectedProcess] = useState(null)
 
   useEffect(() => {
     let isActive = true
@@ -121,6 +123,15 @@ function Processos() {
     }
   }
 
+  if (selectedProcess) {
+    return (
+      <ProcessoDetalhe
+        processo={selectedProcess}
+        onBack={() => setSelectedProcess(null)}
+      />
+    )
+  }
+
   return (
     <>
       <section className="page-intro">
@@ -183,6 +194,7 @@ function Processos() {
                 <ProcessoCard
                   key={processo.id}
                   processo={processo}
+                  onOpen={setSelectedProcess}
                   onDelete={handleDeleteProcesso}
                   onEdit={handleEditProcesso}
                   onUpdate={handleUpdateProcesso}

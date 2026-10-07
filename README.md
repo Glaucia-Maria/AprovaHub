@@ -41,6 +41,8 @@ Para manter o projeto simples e permitir uma implementação inicial rápida, as
 
 **RF04:** O sistema deve permitir classificar o nível de conhecimento de cada conteúdo em uma escala de 1 a 5.
 
+Na interface, a escala de domínio é apresentada com emojis e uma legenda permanente, mantendo os valores numéricos de 1 a 5 para os cálculos.
+
 **RF05:** O sistema deve apresentar uma porcentagem de domínio dos conteúdos para cada processo seletivo.
 
 **RF06:** O sistema deve permitir cadastrar um histórico de simulados, registrando o desempenho alcançado em cada um.
@@ -147,6 +149,10 @@ Para manter o projeto simples e permitir uma implementação inicial rápida, as
 ## 12. Estrutura do projeto
 
 ## 13. Interface
+
+O AprovaHub usa autenticação do Supabase Auth com e-mail e senha. Após entrar, o menu principal permite acessar processos seletivos, histórico de simulados e diário pessoal; também é possível encerrar a sessão. As contas são gerenciadas pelo Supabase, sem tabela de usuários própria.
+
+Em simulados, é possível registrar o processo relacionado, a data, o total de questões, os acertos e uma observação opcional; o percentual de desempenho é calculado automaticamente. O diário permite registrar mensagens pessoais. Esses registros podem ser editados ou excluídos.
 
 ## 14. Testes
 

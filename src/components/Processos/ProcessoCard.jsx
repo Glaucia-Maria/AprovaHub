@@ -11,6 +11,7 @@ function ProcessoCard({
   processo,
   onDelete,
   onEdit,
+  onOpen,
   onUpdate,
   isEditing,
   isDeleting,
@@ -43,7 +44,14 @@ function ProcessoCard({
         <>
           <div className="process-card-heading">
             <div className="process-card-title">
-              <h3>{processo.nome}</h3>
+              <button
+                className="process-card-open"
+                type="button"
+                onClick={() => onOpen(processo)}
+                aria-label={`Abrir disciplinas de ${processo.nome}`}
+              >
+                {processo.nome}
+              </button>
               <span className={`status-badge ${statusClasses[processo.status] ?? ''}`}>
                 {processo.status}
               </span>
@@ -70,6 +78,13 @@ function ProcessoCard({
             </div>
           </div>
           {processo.descricao && <p className="process-description">{processo.descricao}</p>}
+          <button
+            className="process-open-link"
+            type="button"
+            onClick={() => onOpen(processo)}
+          >
+            Gerenciar disciplinas <span aria-hidden="true">→</span>
+          </button>
           {dataCriacao && (
             <p className="process-date">
               Cadastrado em <time dateTime={processo.created_at}>{dataCriacao}</time>
