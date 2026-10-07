@@ -990,6 +990,127 @@ h1 {
   margin-top: 8px;
 }
 
+.question-history {
+  margin-top: 11px;
+  border-top: 1px solid #27364a;
+  padding-top: 9px;
+}
+
+.question-history summary {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: #a9c4d8;
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 700;
+  list-style: none;
+}
+
+.question-history summary::-webkit-details-marker {
+  display: none;
+}
+
+.question-history-count {
+  display: inline-grid;
+  min-width: 19px;
+  height: 19px;
+  place-items: center;
+  border-radius: 50%;
+  background: #172638;
+  color: #7dd3fc;
+  font-size: 9px;
+}
+
+.question-history-summary {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  margin-top: 10px;
+  color: #8491a5;
+  font-size: 10px;
+}
+
+.question-history-summary strong {
+  color: var(--color-green);
+  font-family: Manrope, sans-serif;
+  font-size: 13px;
+}
+
+.question-history-list {
+  display: grid;
+  gap: 7px;
+  margin-top: 9px;
+}
+
+.question-history-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border: 1px solid #27364a;
+  border-radius: 8px;
+  padding: 8px;
+  background: #111c2a;
+}
+
+.question-history-item > div:first-child {
+  display: grid;
+  gap: 3px;
+  color: #cbd5e1;
+  font-size: 10px;
+}
+
+.question-history-item > div:first-child span {
+  color: #8491a5;
+  font-size: 9px;
+}
+
+.question-history-actions {
+  display: flex;
+  flex: 0 0 auto;
+  gap: 9px;
+}
+
+.question-history-add {
+  margin-top: 10px;
+  border: 1px dashed #35445c;
+  border-radius: 9px;
+  padding: 10px;
+  background: #0e1623;
+}
+
+.question-log-form {
+  display: grid;
+  gap: 10px;
+}
+
+.question-log-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.question-log-fields .form-field {
+  gap: 5px;
+}
+
+.question-log-fields .form-field label {
+  font-size: 9px;
+}
+
+.question-log-fields .form-field input {
+  min-height: 34px;
+  font-size: 11px;
+}
+
+.question-log-form .nested-form-actions .button {
+  min-height: 32px;
+  font-size: 10px;
+}
+
 .text-action {
   border: 0;
   padding: 0;

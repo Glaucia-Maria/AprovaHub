@@ -1,9 +1,11 @@
 import { supabase } from './supabase'
+import { requireAuthenticatedUser } from './authService'
 
 const simuladoColumns =
   'id, processo_seletivo_id, nome, data, quantidade_questoes, quantidade_acertos, observacao, created_at, updated_at'
 
 export async function listarSimulados() {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('simulado')
     .select(simuladoColumns)
@@ -17,6 +19,7 @@ export async function listarSimulados() {
 }
 
 export async function criarSimulado(simulado) {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('simulado')
     .insert([{
@@ -38,6 +41,7 @@ export async function criarSimulado(simulado) {
 }
 
 export async function editarSimulado(id, simulado) {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('simulado')
     .update({
@@ -60,6 +64,7 @@ export async function editarSimulado(id, simulado) {
 }
 
 export async function excluirSimulado(id) {
+  await requireAuthenticatedUser()
   const { error } = await supabase
     .from('simulado')
     .delete()

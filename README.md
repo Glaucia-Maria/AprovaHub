@@ -45,6 +45,10 @@ Na interface, a escala de domínio é apresentada com emojis e uma legenda perma
 
 **RF05:** O sistema deve apresentar uma porcentagem de domínio dos conteúdos para cada processo seletivo.
 
+Cada conteúdo também mantém um histórico de questões resolvidas, com total de questões e acertos por registro, além do aproveitamento acumulado.
+
+Os registros individuais de questões por conteúdo são armazenados em `lista_questoes`; o vínculo `conteudo_id` é selecionado pelo conteúdo em que o registro é criado, enquanto identificador e timestamps são gerados pelo banco.
+
 **RF06:** O sistema deve permitir cadastrar um histórico de simulados, registrando o desempenho alcançado em cada um.
 
 **RF07:** O sistema deve permitir adicionar uma mensagem ou observação a cada simulado, possibilitando registrar percepções sobre o próprio desempenho e evolução.
@@ -150,7 +154,7 @@ Na interface, a escala de domínio é apresentada com emojis e uma legenda perma
 
 ## 13. Interface
 
-O AprovaHub usa autenticação do Supabase Auth com e-mail e senha. Após entrar, o menu principal permite acessar processos seletivos, histórico de simulados e diário pessoal; também é possível encerrar a sessão. As contas são gerenciadas pelo Supabase, sem tabela de usuários própria.
+O AprovaHub usa autenticação do Supabase Auth com e-mail e senha. A sessão e o usuário autenticados ficam disponíveis pelo `AuthContext`, e cada serviço de dados confirma a autenticação antes de executar operações no Supabase. O acesso às linhas continua controlado pelas políticas RLS: o cliente não envia `user_id` manualmente nem duplica filtros de usuário. Após entrar, o menu principal permite acessar processos seletivos, histórico de simulados e diário pessoal; também é possível encerrar a sessão. As contas são gerenciadas pelo Supabase, sem tabela de usuários própria.
 
 Em simulados, é possível registrar o processo relacionado, a data, o total de questões, os acertos e uma observação opcional; o percentual de desempenho é calculado automaticamente. O diário permite registrar mensagens pessoais. Esses registros podem ser editados ou excluídos.
 

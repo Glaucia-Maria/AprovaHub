@@ -1,8 +1,10 @@
 import { supabase } from './supabase'
+import { requireAuthenticatedUser } from './authService'
 
 const disciplinaColumns = 'id, processo_seletivo_id, nome, peso, created_at, updated_at'
 
 export async function listarDisciplinas(processoId) {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('disciplina')
     .select(disciplinaColumns)
@@ -17,6 +19,7 @@ export async function listarDisciplinas(processoId) {
 }
 
 export async function criarDisciplina(disciplina) {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('disciplina')
     .insert([{
@@ -35,6 +38,7 @@ export async function criarDisciplina(disciplina) {
 }
 
 export async function editarDisciplina(id, changes) {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('disciplina')
     .update({ nome: changes.nome, peso: changes.peso })
@@ -50,6 +54,7 @@ export async function editarDisciplina(id, changes) {
 }
 
 export async function excluirDisciplina(id) {
+  await requireAuthenticatedUser()
   const { error } = await supabase
     .from('disciplina')
     .delete()

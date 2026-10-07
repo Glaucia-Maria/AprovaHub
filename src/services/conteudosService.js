@@ -1,9 +1,11 @@
 import { supabase } from './supabase'
+import { requireAuthenticatedUser } from './authService'
 
 const conteudoColumns =
   'id, disciplina_id, nome, descricao, nivel_conhecimento, created_at, updated_at'
 
 export async function listarConteudos(disciplinaId) {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('conteudo')
     .select(conteudoColumns)
@@ -18,6 +20,7 @@ export async function listarConteudos(disciplinaId) {
 }
 
 export async function criarConteudo(conteudo) {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('conteudo')
     .insert([{
@@ -37,6 +40,7 @@ export async function criarConteudo(conteudo) {
 }
 
 export async function editarConteudo(id, changes) {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('conteudo')
     .update({
@@ -56,6 +60,7 @@ export async function editarConteudo(id, changes) {
 }
 
 export async function excluirConteudo(id) {
+  await requireAuthenticatedUser()
   const { error } = await supabase
     .from('conteudo')
     .delete()

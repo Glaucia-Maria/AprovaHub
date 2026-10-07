@@ -1,4 +1,5 @@
 import { supabase } from './supabase'
+import { requireAuthenticatedUser } from './authService'
 
 const mensagemColumns = 'id, conteudo, created_at'
 
@@ -7,6 +8,7 @@ function mapearMensagem(row) {
 }
 
 export async function listarMensagens() {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('mensagem')
     .select(mensagemColumns)
@@ -20,6 +22,7 @@ export async function listarMensagens() {
 }
 
 export async function criarMensagem(mensagem) {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('mensagem')
     .insert([{ conteudo: mensagem.mensagem }])
@@ -34,6 +37,7 @@ export async function criarMensagem(mensagem) {
 }
 
 export async function editarMensagem(id, mensagem) {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('mensagem')
     .update({ conteudo: mensagem.mensagem })
@@ -49,6 +53,7 @@ export async function editarMensagem(id, mensagem) {
 }
 
 export async function excluirMensagem(id) {
+  await requireAuthenticatedUser()
   const { error } = await supabase
     .from('mensagem')
     .delete()

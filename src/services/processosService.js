@@ -1,8 +1,10 @@
 import { supabase } from './supabase'
+import { requireAuthenticatedUser } from './authService'
 
 const processColumns = 'id, nome, descricao, status, created_at, updated_at'
 
 export async function listarProcessos() {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('processo_seletivo')
     .select(processColumns)
@@ -16,6 +18,7 @@ export async function listarProcessos() {
 }
 
 export async function criarProcesso(processo) {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('processo_seletivo')
     .insert([
@@ -32,6 +35,7 @@ export async function criarProcesso(processo) {
 }
 
 export async function excluirProcesso(id) {
+  await requireAuthenticatedUser()
   const { error } = await supabase
     .from('processo_seletivo')
     .delete()
@@ -43,6 +47,7 @@ export async function excluirProcesso(id) {
 }
 
 export async function editarProcesso(id, processo) {
+  await requireAuthenticatedUser()
   const { data, error } = await supabase
     .from('processo_seletivo')
     .update({

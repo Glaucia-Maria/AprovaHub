@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import DisciplinaForm from '../components/Disciplinas/DisciplinaForm'
 import ConteudoForm from '../components/Disciplinas/ConteudoForm'
+import ListaQuestoesForm from '../components/Disciplinas/ListaQuestoesForm'
 import { obterDominio } from '../components/Disciplinas/dominioNiveis'
 import {
   criarDisciplina,
@@ -14,6 +15,38 @@ import {
   excluirConteudo,
   listarConteudos,
 } from '../services/conteudosService'
+import {
+  criarListaQuestoes,
+  editarListaQuestoes,
+  excluirListaQuestoes,
+  listarListaQuestoes,
+} from '../services/listaQuestoesService'
+
+function atualizarConteudo(disciplinas, conteudoId, atualizar) {
+  return disciplinas.map((disciplina) => ({
+    ...disciplina,
+    conteudos: disciplina.conteudos.map((conteudo) =>
+      conteudo.id === conteudoId ? atualizar(conteudo) : conteudo,
+    ),
+  }))
+}
+
+function calcularAproveitamento(registros) {
+  const totalQuestoes = registros.reduce(
+    (total, registro) => total + Number(registro.quantidade_questoes),
+    0,
+  )
+  const totalAcertos = registros.reduce(
+    (total, registro) => total + Number(registro.quantidade_acertos),
+    0,
+  )
+
+  return {
+    totalQuestoes,
+    totalAcertos,
+    percentual: totalQuestoes ? (totalAcertos / totalQuestoes) * 100 : null,
+  }
+}
 
 function calcularDominio(conteudos) {
   if (!conteudos.length) return null
@@ -36,6 +69,7 @@ function ProcessoDetalhe({ processo, onBack }) {
   const [errorMessage, setErrorMessage] = useState('')
   const [editingDisciplinaId, setEditingDisciplinaId] = useState(null)
   const [editingConteudoId, setEditingConteudoId] = useState(null)
+  const [editingListaQuestoesId, setEditingListaQuestoesId] = useState(null)
   const [reloadKey, setReloadKey] = useState(0)
 
   useEffect(() => {
@@ -47,10 +81,16 @@ function ProcessoDetalhe({ processo, onBack }) {
       try {
         const rows = await listarDisciplinas(processo.id)
         const disciplinasComConteudos = await Promise.all(
-          rows.map(async (disciplina) => ({
-            ...disciplina,
-            conteudos: await listarConteudos(disciplina.id),
-          })),
+          rows.map(async (disciplina) => {
+            const conteudos = await listarConteudos(disciplina.id)
+            const conteudosComQuestoes = await Promise.all(
+              conteudos.map(async (conteudo) => ({
+                ...conteudo,
+                listaQuestoes: await listarListaQuestoes(conteudo.id),
+              })),
+            )
+            return { ...disciplina, conteudos: conteudosComQuestoes }
+          }),
         )
         if (isActive) setDisciplinas(disciplinasComConteudos)
       } catch (error) {
@@ -152,7 +192,10 @@ function ProcessoDetalhe({ processo, onBack }) {
       setDisciplinas((current) =>
         current.map((disciplina) =>
           disciplina.id === disciplinaId
-            ? { ...disciplina, conteudos: [...disciplina.conteudos, conteudo] }
+            ? {
+              ...disciplina,
+              conteudos: [...disciplina.conteudos, { ...conteudo, listaQuestoes: [] }],
+            }
             : disciplina,
         ),
       )
@@ -171,11 +214,9 @@ function ProcessoDetalhe({ processo, onBack }) {
     try {
       const conteudoAtualizado = await editarConteudo(id, values)
       setDisciplinas((current) =>
-        current.map((disciplina) => ({
-          ...disciplina,
-          conteudos: disciplina.conteudos.map((conteudo) =>
-            conteudo.id === id ? conteudoAtualizado : conteudo,
-          ),
+        atualizarConteudo(current, id, (conteudo) => ({
+          ...conteudoAtualizado,
+          listaQuestoes: conteudo.listaQuestoes,
         })),
       )
       setEditingConteudoId(null)
@@ -202,6 +243,65 @@ function ProcessoDetalhe({ processo, onBack }) {
       )
     } catch (error) {
       setErrorMessage(`Não foi possível excluir o conteúdo: ${error.message}`)
+    }
+  }
+
+  async function handleCreateListaQuestoes(conteudoId, values) {
+    setIsSaving(true)
+    setErrorMessage('')
+    try {
+      const registro = await criarListaQuestoes({ ...values, conteudo_id: conteudoId })
+      setDisciplinas((current) =>
+        atualizarConteudo(current, conteudoId, (conteudo) => ({
+          ...conteudo,
+          listaQuestoes: [registro, ...conteudo.listaQuestoes],
+        })),
+      )
+      return true
+    } catch (error) {
+      setErrorMessage(`Não foi possível registrar as questões: ${error.message}`)
+      return false
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  async function handleUpdateListaQuestoes(id, conteudoId, values) {
+    setIsSaving(true)
+    setErrorMessage('')
+    try {
+      const registroAtualizado = await editarListaQuestoes(id, values)
+      setDisciplinas((current) =>
+        atualizarConteudo(current, conteudoId, (conteudo) => ({
+          ...conteudo,
+          listaQuestoes: conteudo.listaQuestoes.map((registro) =>
+            registro.id === id ? registroAtualizado : registro,
+          ),
+        })),
+      )
+      setEditingListaQuestoesId(null)
+      return true
+    } catch (error) {
+      setErrorMessage(`Não foi possível atualizar o registro de questões: ${error.message}`)
+      return false
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  async function handleDeleteListaQuestoes(id, conteudoId) {
+    if (!window.confirm('Excluir este registro de questões?')) return
+    setErrorMessage('')
+    try {
+      await excluirListaQuestoes(id)
+      setDisciplinas((current) =>
+        atualizarConteudo(current, conteudoId, (conteudo) => ({
+          ...conteudo,
+          listaQuestoes: conteudo.listaQuestoes.filter((registro) => registro.id !== id),
+        })),
+      )
+    } catch (error) {
+      setErrorMessage(`Não foi possível excluir o registro de questões: ${error.message}`)
     }
   }
 
@@ -364,6 +464,101 @@ function ProcessoDetalhe({ processo, onBack }) {
                                       Excluir
                                     </button>
                                   </div>
+                                  {(() => {
+                                    const registros = conteudo.listaQuestoes ?? []
+                                    const resumo = calcularAproveitamento(registros)
+                                    return (
+                                      <details className="question-history">
+                                        <summary>
+                                          <span>📚 Questões resolvidas</span>
+                                          <span className="question-history-count">
+                                            {registros.length}
+                                          </span>
+                                        </summary>
+                                        {resumo.totalQuestoes > 0 && (
+                                          <div className="question-history-summary">
+                                            <strong>{resumo.totalAcertos}/{resumo.totalQuestoes}</strong>
+                                            <span>
+                                              {formatarDominio(resumo.percentual)} de aproveitamento acumulado
+                                            </span>
+                                          </div>
+                                        )}
+                                        {registros.length > 0 && (
+                                          <div className="question-history-list">
+                                            {registros.map((registro) => {
+                                              const dataRegistro = new Intl.DateTimeFormat(
+                                                'pt-BR',
+                                                { dateStyle: 'medium' },
+                                              ).format(new Date(registro.created_at))
+                                              return (
+                                                <div className="question-history-item" key={registro.id}>
+                                                  {editingListaQuestoesId === registro.id ? (
+                                                    <ListaQuestoesForm
+                                                      initialValues={registro}
+                                                      fieldPrefix={`questoes-${registro.id}`}
+                                                      onSubmit={(values) =>
+                                                        handleUpdateListaQuestoes(
+                                                          registro.id,
+                                                          conteudo.id,
+                                                          values,
+                                                        )
+                                                      }
+                                                      onCancel={() => setEditingListaQuestoesId(null)}
+                                                      isSaving={isSaving}
+                                                    />
+                                                  ) : (
+                                                    <>
+                                                      <div>
+                                                        <strong>
+                                                          {registro.quantidade_acertos}/
+                                                          {registro.quantidade_questoes} acertos
+                                                        </strong>
+                                                        <span>{dataRegistro}</span>
+                                                      </div>
+                                                      <div className="question-history-actions">
+                                                        <button
+                                                          className="text-action"
+                                                          type="button"
+                                                          onClick={() =>
+                                                            setEditingListaQuestoesId(registro.id)
+                                                          }
+                                                          disabled={isSaving}
+                                                        >
+                                                          Editar
+                                                        </button>
+                                                        <button
+                                                          className="text-action text-action--delete"
+                                                          type="button"
+                                                          onClick={() =>
+                                                            handleDeleteListaQuestoes(
+                                                              registro.id,
+                                                              conteudo.id,
+                                                            )
+                                                          }
+                                                          disabled={isSaving}
+                                                        >
+                                                          Excluir
+                                                        </button>
+                                                      </div>
+                                                    </>
+                                                  )}
+                                                </div>
+                                              )
+                                            })}
+                                          </div>
+                                        )}
+                                        <div className="question-history-add">
+                                          <ListaQuestoesForm
+                                            fieldPrefix={`novas-questoes-${conteudo.id}`}
+                                            onSubmit={(values) =>
+                                              handleCreateListaQuestoes(conteudo.id, values)
+                                            }
+                                            isSaving={isSaving}
+                                          />
+                                        </div>
+                                      </details>
+                                    )
+                                  })()}
                                 </>
                               )}
                             </div>
